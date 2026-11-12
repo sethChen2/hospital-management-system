@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mapper.DoctorMapper">
+
+    <sql id="doctorColumns">
+        d.doctor_id, d.user_id, d.position, d.department, d.register_fee, d.is_on_job,
+        u.account, u.name, u.gender, u.phone, u.email, u.idcard, u.birth, u.account_status
+    </sql>
+
+    <select id="pageDoctors" resultType="com.hospital.entity.po.Doctor">
+        SELECT
+        <include refid="doctorColumns"/>
+        FROM doctor d
+        JOIN `user` u ON d.user_id = u.user_id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (u.name LIKE CONCAT('%', #{keyword}, '%')
+                OR u.account LIKE CONCAT('%', #{keyword}, '%')
+                OR u.phone LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="department != null and department != ''">
+                AND d.department = #{department}
+            </if>
+            <if test="isOnJob != null">
+                AND d.is_on_job = #{isOnJob}
+            </if>
+        </where>
+        ORDER BY d.doctor_id
+    </select>
+
+    <select id="selectDetail" resultType="com.hospital.entity.po.Doctor">
+        SELECT
+        <include refid="doctorColumns"/>
+        FROM doctor d
+        JOIN `user` u ON d.user_id = u.user_id
+        WHERE d.doctor_id = #{doctorId}
+    </select>
+
+    <select id="selectListDetail" resultType="com.hospital.entity.po.Doctor">
+        SELECT
+        <include refid="doctorColumns"/>
+        FROM doctor d
+        JOIN `user` u ON d.user_id = u.user_id
+        WHERE d.is_on_job = 1
+        <if test="department != null and department != ''">
+            AND d.department = #{department}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (u.name LIKE CONCAT('%', #{keyword}, '%')
+            OR d.position LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        ORDER BY d.doctor_id
+    </select>
+
+    <select id="selectDepartments" resultType="java.lang.String">
+        SELECT DISTINCT d.department
+        FROM doctor d
+        WHERE d.department IS NOT NULL AND d.department != ''
+        ORDER BY d.department
+    </select>
+
+</mapper>

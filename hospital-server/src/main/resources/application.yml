@@ -1,0 +1,80 @@
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: UTF-8
+
+spring:
+  application:
+    name: hospital-server
+
+  # 本地敏感配置放在 application-local.yml（已被 .gitignore 忽略）
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:hospital}?characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  # Spring Boot 2.7 使用 spring.redis.*（不是 spring.data.redis.*）
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: 0
+    timeout: 5000ms
+    lettuce:
+      pool:
+        max-active: 16
+        max-idle: 8
+        min-idle: 2
+        max-wait: 3000ms
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    serialization:
+      write-dates-as-timestamps: false
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml
+  type-aliases-package: com.hospital.entity.po
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+hospital:
+  jwt:
+    # 演示用密钥，生产环境请通过 JWT_SECRET 环境变量覆盖
+    secret: ${JWT_SECRET:hospital-system-demo-jwt-secret}
+    # token 有效期（秒）
+    expire-seconds: 7200
+  rate-limit:
+    # 窗口大小（秒）与窗口内最大请求次数
+    window-seconds: 60
+    max-times: 10
+  cors:
+    # 逗号分隔（@Value 无法直接注入 YAML 列表）
+    allowed-origins: http://localhost:8081,http://127.0.0.1:8081
+
+logging:
+  level:
+    root: info
+    # 业务包保留 DEBUG 便于演示链路；Mapper 层压到 INFO，避免每条 SQL 刷屏
+    com.hospital: debug
+    com.hospital.mapper: info

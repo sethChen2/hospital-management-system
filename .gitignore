@@ -1,0 +1,45 @@
+# ---------- 构建产物 ----------
+hospital-server/target/
+hospital-server/logs/
+hospital-web/node_modules/
+hospital-web/dist/
+logs/
+*.log
+
+# ---------- 本地敏感配置（数据库 / Redis 密码、JWT 密钥）----------
+hospital-server/src/main/resources/application-local.yml
+
+# ---------- IDE / 编辑器 ----------
+.idea/
+.vscode/
+.trae/
+*.iml
+*.ipr
+*.iws
+
+# ---------- 系统与临时文件 ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+*.tmp
+*.bkp
+.$*
+~$*
+
+# ---------- 根目录资料（仓库仅保留源码与 SQL）----------
+/*.doc
+/*.docx
+/*.ppt
+/*.pptx
+/*.mpp
+/*.csv
+/*.drawio
+/*.vsd
+/*.png
+/医院管理系统-项目框架分析.md
+/启动系统.bat
+/停止系统.bat
+/ppt-assets/
+/ppt-build/
+/tools/

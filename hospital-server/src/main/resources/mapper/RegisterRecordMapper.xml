@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mapper.RegisterRecordMapper">
+
+    <sql id="recordColumns">
+        r.register_id, r.patient_user_id, r.doctor_id, r.schedule_id, r.appoint_time,
+        r.register_status, r.diagnosis, r.symptom, r.end_time, r.total_cost,
+        r.pay_status, r.version,
+        pu.name AS patient_name, pu.gender AS patient_gender, pu.phone AS patient_phone,
+        du.name AS doctor_name, d.department, d.position,
+        s.schedule_date, s.time_period
+    </sql>
+
+    <sql id="recordJoins">
+        FROM registerrecord r
+        JOIN `user` pu ON r.patient_user_id = pu.user_id
+        JOIN doctor d ON r.doctor_id = d.doctor_id
+        JOIN `user` du ON d.user_id = du.user_id
+        JOIN schedule s ON r.schedule_id = s.schedule_id
+    </sql>
+
+    <select id="pageRecords" resultType="com.hospital.entity.po.RegisterRecord">
+        SELECT
+        <include refid="recordColumns"/>
+        <include refid="recordJoins"/>
+        <where>
+            <if test="patientUserId != null">
+                AND r.patient_user_id = #{patientUserId}
+            </if>
+            <if test="doctorId != null">
+                AND r.doctor_id = #{doctorId}
+            </if>
+            <if test="registerStatus != null and registerStatus != ''">
+                AND r.register_status = #{registerStatus}
+            </if>
+            <if test="payStatus != null and payStatus != ''">
+                AND r.pay_status = #{payStatus}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (pu.name LIKE CONCAT('%', #{keyword}, '%')
+                OR du.name LIKE CONCAT('%', #{keyword}, '%')
+                OR pu.phone LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY r.register_id DESC
+    </select>
+
+    <select id="selectDetail" resultType="com.hospital.entity.po.RegisterRecord">
+        SELECT
+        <include refid="recordColumns"/>
+        <include refid="recordJoins"/>
+        WHERE r.register_id = #{registerId}
+    </select>
+
+    <select id="selectHistoryByDoctor" resultType="com.hospital.entity.po.RegisterRecord">
+        SELECT
+        <include refid="recordColumns"/>
+        <include refid="recordJoins"/>
+        <where>
+            <if test="doctorId != null">
+                AND r.doctor_id = #{doctorId}
+            </if>
+            <if test="patientUserId != null">
+                AND r.patient_user_id = #{patientUserId}
+            </if>
+        </where>
+        ORDER BY r.register_id DESC
+    </select>
+
+    <!-- ==================== 运营统计 ==================== -->
+
+    <select id="countByDepartment" resultType="java.util.Map">
+        SELECT d.department AS name, COUNT(*) AS value
+        FROM registerrecord r
+        JOIN doctor d ON r.doctor_id = d.doctor_id
+        GROUP BY d.department
+        ORDER BY value DESC
+    </select>
+
+    <select id="countByGender" resultType="java.util.Map">
+        SELECT u.gender AS name, COUNT(*) AS value
+        FROM registerrecord r
+        JOIN `user` u ON r.patient_user_id = u.user_id
+        GROUP BY u.gender
+        ORDER BY value DESC
+    </select>
+
+    <select id="countByDate" resultType="java.util.Map">
+        SELECT DATE_FORMAT(s.schedule_date, '%Y-%m-%d') AS name, COUNT(*) AS value
+        FROM registerrecord r
+        JOIN schedule s ON r.schedule_id = s.schedule_id
+        WHERE s.schedule_date &gt;= DATE_SUB(CURDATE(), INTERVAL #{days} DAY)
+        GROUP BY DATE_FORMAT(s.schedule_date, '%Y-%m-%d')
+        ORDER BY name
+    </select>
+
+    <select id="sumIncomeByDepartment" resultType="java.util.Map">
+        SELECT d.department AS name, IFNULL(SUM(r.total_cost), 0) AS value
+        FROM registerrecord r
+        JOIN doctor d ON r.doctor_id = d.doctor_id
+        WHERE r.pay_status = '已缴费'
+        GROUP BY d.department
+        ORDER BY value DESC
+    </select>
+
+    <select id="countByDoctor" resultType="java.util.Map">
+        SELECT u.name AS name, COUNT(*) AS value
+        FROM registerrecord r
+        JOIN doctor d ON r.doctor_id = d.doctor_id
+        JOIN `user` u ON d.user_id = u.user_id
+        GROUP BY u.name
+        ORDER BY value DESC
+        LIMIT #{limit}
+    </select>
+
+</mapper>

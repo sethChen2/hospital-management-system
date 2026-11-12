@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mapper.BedMapper">
+
+    <sql id="bedColumns">
+        b.bed_id, b.patient_user_id, b.doctor_id, b.bed_status,
+        b.hospital_time, b.hospital_reason, b.version,
+        pu.name AS patient_name, du.name AS doctor_name, d.department
+    </sql>
+
+    <sql id="bedJoins">
+        FROM bed b
+        LEFT JOIN `user` pu ON b.patient_user_id = pu.user_id
+        LEFT JOIN doctor d ON b.doctor_id = d.doctor_id
+        LEFT JOIN `user` du ON d.user_id = du.user_id
+    </sql>
+
+    <select id="pageBeds" resultType="com.hospital.entity.po.Bed">
+        SELECT
+        <include refid="bedColumns"/>
+        <include refid="bedJoins"/>
+        <where>
+            <if test="bedStatus != null and bedStatus != ''">
+                AND b.bed_status = #{bedStatus}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (pu.name LIKE CONCAT('%', #{keyword}, '%')
+                OR du.name LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY b.bed_id
+    </select>
+
+    <select id="selectByPatient" resultType="com.hospital.entity.po.Bed">
+        SELECT
+        <include refid="bedColumns"/>
+        <include refid="bedJoins"/>
+        WHERE b.patient_user_id = #{patientUserId}
+        ORDER BY b.bed_id DESC
+    </select>
+
+    <select id="selectDetail" resultType="com.hospital.entity.po.Bed">
+        SELECT
+        <include refid="bedColumns"/>
+        <include refid="bedJoins"/>
+        WHERE b.bed_id = #{bedId}
+    </select>
+
+    <select id="selectFreeBedId" resultType="java.lang.Integer">
+        SELECT bed_id FROM bed WHERE bed_status = '空闲' ORDER BY bed_id LIMIT 1
+    </select>
+
+    <!-- 条件更新即 CAS：只有仍空闲才能占用，天然防并发重复分配 -->
+    <update id="occupyBed">
+        UPDATE bed
+        SET patient_user_id = #{patientUserId},
+            doctor_id = #{doctorId},
+            bed_status = '占用',
+            hospital_time = #{hospitalTime},
+            hospital_reason = #{hospitalReason},
+            version = version + 1
+        WHERE bed_id = #{bedId} AND bed_status = '空闲'
+    </update>
+
+    <select id="countByStatus" resultType="java.util.Map">
+        SELECT bed_status AS name, COUNT(*) AS value FROM bed GROUP BY bed_status
+    </select>
+
+</mapper>

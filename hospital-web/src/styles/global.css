@@ -1,0 +1,352 @@
+/* ==========================================================================
+   医院管理系统 · 全局设计系统
+   统一主题色 / 圆角 / 阴影 / 间距，并覆盖 Element UI 默认样式
+   ========================================================================== */
+
+:root {
+  --brand: #409eff;
+  --brand-hover: #66b1ff;
+  --brand-dark: #2b7de9;
+  --brand-light: #ecf5ff;
+  --brand-border: #d9ecff;
+
+  --success: #67c23a;
+  --warning: #e6a23c;
+  --danger: #f56c6c;
+  --info: #909399;
+
+  --text-main: #303133;
+  --text-regular: #606266;
+  --text-secondary: #909399;
+
+  --bg-page: #f0f2f5;
+  --bg-card: #ffffff;
+  --border-color: #ebeef5;
+  --border-light: #f2f4f7;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.03), 0 4px 14px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 6px 22px rgba(0, 0, 0, 0.1);
+
+  --aside-bg: #2b3648;
+  --aside-border: #364254;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', Arial, sans-serif;
+  font-size: 14px;
+  color: var(--text-main);
+  background-color: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== 滚动条 ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c8cdd6;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8b0bb;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ===== 页面骨架 ===== */
+.page-container {
+  padding: 18px 20px;
+}
+
+.filter-bar {
+  margin-bottom: 14px;
+}
+
+.filter-bar .el-form-item {
+  margin-bottom: 0;
+}
+
+.table-toolbar {
+  margin-bottom: 12px;
+}
+
+.pagination-wrap {
+  margin-top: 14px;
+  text-align: right;
+}
+
+/* 卡片标题：左侧主题色竖条 */
+.card-title {
+  position: relative;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 16px;
+  padding-left: 11px;
+  line-height: 1.3;
+  color: var(--text-main);
+}
+
+.card-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 15px;
+  border-radius: 2px;
+  background: var(--brand);
+}
+
+.stat-card-value {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--brand);
+  line-height: 1.2;
+}
+
+.stat-card-label {
+  margin-top: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* ===== Element UI 统一样式 ===== */
+
+/* 卡片 */
+.el-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card) !important;
+  transition: box-shadow 0.25s ease;
+}
+
+.el-card__header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
+}
+
+.el-card__body {
+  padding: 18px;
+}
+
+/* 按钮 */
+.el-button {
+  border-radius: var(--radius-sm);
+  font-weight: 400;
+}
+
+.el-button--primary {
+  background-color: var(--brand);
+  border-color: var(--brand);
+}
+
+.el-button--primary:hover,
+.el-button--primary:focus {
+  background-color: var(--brand-hover);
+  border-color: var(--brand-hover);
+}
+
+.el-button--text {
+  padding: 0 4px;
+}
+
+/* 表单 / 输入 */
+.el-input__inner,
+.el-textarea__inner {
+  border-radius: var(--radius-sm);
+}
+
+.el-input__inner:focus,
+.el-textarea__inner:focus {
+  border-color: var(--brand);
+}
+
+.el-form-item__label {
+  color: var(--text-regular);
+}
+
+/* 表格 */
+.el-table {
+  border-radius: var(--radius-sm);
+  color: var(--text-regular);
+}
+
+.el-table th.el-table__cell {
+  background-color: #f5f7fa;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.el-table__row:hover > td.el-table__cell {
+  background-color: var(--brand-light) !important;
+}
+
+/* 分页 */
+.el-pagination.is-background .el-pager li:not(.disabled).active {
+  background-color: var(--brand);
+}
+
+/* 对话框 */
+.el-dialog {
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+}
+
+.el-dialog__header {
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border-color);
+  background: #fafbfc;
+}
+
+.el-dialog__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.el-dialog__body {
+  padding: 20px;
+}
+
+.el-dialog__footer {
+  padding: 12px 20px 18px;
+}
+
+/* 消息 / 通知 */
+.el-message {
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-hover);
+}
+
+/* 下拉菜单 / 标签 */
+.el-dropdown-menu {
+  border-radius: var(--radius-sm);
+}
+
+.el-tag {
+  border-radius: var(--radius-sm);
+}
+
+/* ===== 认证页（登录 / 注册）公共背景 ===== */
+/* 背景图由组件内联样式绑定（/login-bg.jpg），此处仅提供布局与遮罩 */
+.auth-page {
+  position: relative;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.auth-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(18, 52, 92, 0.62) 0%,
+    rgba(17, 25, 38, 0.72) 100%
+  );
+}
+
+/* 玻璃拟态卡片 */
+.auth-card {
+  position: relative;
+  z-index: 1;
+  padding: 36px 36px 24px;
+  background: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  animation: auth-card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes auth-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-brand {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.auth-brand .auth-logo {
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+  box-shadow: 0 8px 20px rgba(64, 158, 255, 0.35);
+}
+
+.auth-brand .auth-logo i {
+  font-size: 32px;
+  color: #fff;
+}
+
+.auth-brand h1 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-main);
+  letter-spacing: 1px;
+}
+
+.auth-brand p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  letter-spacing: 2px;
+}
+
+.auth-submit {
+  width: 100%;
+  height: 42px;
+  font-size: 15px;
+  letter-spacing: 4px;
+  border-radius: var(--radius-sm);
+}

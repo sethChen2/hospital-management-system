@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mapper.RegisterCheckMapper">
+
+    <select id="selectByRegisterId" resultType="com.hospital.entity.po.RegisterCheck">
+        SELECT rc.rc_id, rc.register_id, rc.check_id,
+               c.check_name, c.price
+        FROM registercheck rc
+        JOIN checkitem c ON rc.check_id = c.check_id
+        WHERE rc.register_id = #{registerId}
+        ORDER BY rc.rc_id
+    </select>
+
+    <select id="sumPriceByRegisterId" resultType="java.math.BigDecimal">
+        SELECT IFNULL(SUM(c.price), 0)
+        FROM registercheck rc
+        JOIN checkitem c ON rc.check_id = c.check_id
+        WHERE rc.register_id = #{registerId}
+    </select>
+
+</mapper>

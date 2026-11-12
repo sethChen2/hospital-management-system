@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hospital.mapper.PrescriptionMapper">
+
+    <select id="selectByRegisterId" resultType="com.hospital.entity.po.Prescription">
+        SELECT p.prescription_id, p.register_id, p.drug_id, p.drug_num, p.subtotal,
+               dr.drug_name, dr.price, dr.unit
+        FROM prescription p
+        JOIN drug dr ON p.drug_id = dr.drug_id
+        WHERE p.register_id = #{registerId}
+        ORDER BY p.prescription_id
+    </select>
+
+    <select id="sumSubtotalByRegisterId" resultType="java.math.BigDecimal">
+        SELECT IFNULL(SUM(subtotal), 0) FROM prescription WHERE register_id = #{registerId}
+    </select>
+
+</mapper>
